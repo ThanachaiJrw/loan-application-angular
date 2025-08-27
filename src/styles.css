@@ -1,0 +1,59 @@
+/* You can add global styles to this file, and also import other style files */
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+:root {
+  --color-primary: #0d47a1;
+  --color-second: #ff6f00;
+  --color-success: #2e7d32;
+  --color-danger: #c62828;
+  /* --color-danger:#f44336; */
+  --color-waring: #f9a825;
+  --color-info: #0288d1;
+
+  --border-radius: 8px;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 2rem;
+}
+
+.alert-danger {
+  background-color: var(--color-danger);
+  color: white;
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius);
+}
+
+.btn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius);
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: #fff;
+}
+
+.btn-warning {
+  background-color: var(--color-waring);
+  color: #fff;
+}
+
+.btn-success {
+  background-color: var(--color-success);
+  color: #fff;
+}
+
+.btn-danger {
+  background-color: var(--color-danger);
+  color: #fff;
+}

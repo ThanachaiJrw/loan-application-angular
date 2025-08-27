@@ -1,0 +1,77 @@
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  FormGroupDirective,
+  NgForm,
+} from '@angular/forms';
+import { ErrorStateMatcher } from '@angular/material/core';
+import {
+  DynamicForm,
+  FormConfig,
+} from '../../shared/components/dynamic-form/dynamic-form';
+
+export class MyErrorStateMatcher implements ErrorStateMatcher {
+  isErrorState(
+    control: FormControl | null,
+    form: FormGroupDirective | NgForm | null
+  ): boolean {
+    const isSubmitted = form && form.submitted;
+    return !!(
+      control &&
+      control.invalid &&
+      (control.dirty || control.touched || isSubmitted)
+    );
+  }
+}
+
+@Component({
+  standalone: true,
+  selector: 'app-login',
+  imports: [DynamicForm],
+  templateUrl: './login.html',
+  styleUrl: './login.css',
+})
+export class LoginComponent {
+  loginFormConfig: FormConfig = {
+    fields: [
+      {
+        type: 'text',
+        name: 'username',
+        label: 'ชื่อผู้ใช้',
+        placeholder: 'กรอกชื่อผู้ใช้',
+        col: 6,
+        required: true,
+      },
+      {
+        type: 'password',
+        name: 'password',
+        label: 'รหัสผ่าน',
+        placeholder: 'กรอกรหัสผ่าน',
+        col: 6,
+        required: true,
+      },
+    ],
+    buttons: [
+      {
+        label: 'เข้าสู่ระบบ',
+        action: 'save',
+        color: 'primary',
+        requiresValidation: true,
+      },
+      { label: 'รีเซ็ต', action: 'reset', color: 'warning' },
+    ],
+  };
+
+  handleFormAction(event: { action: string; value: any }) {
+    switch (event.action) {
+      case 'save':
+        console.log('Login data:', event.value);
+        // TODO: เรียก API login
+        break;
+      case 'reset':
+        console.log('Form reset สำเร็จ');
+        break;
+    }
+  }
+}

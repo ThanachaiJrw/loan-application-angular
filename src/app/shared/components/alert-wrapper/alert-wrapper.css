@@ -1,0 +1,47 @@
+.alert {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.alert-success {
+  background-color: var(--color-success);
+}
+.alert-error {
+  background-color: var(--color-danger);
+}
+.alert-info {
+  background-color: var(--color-info);
+}
+.alert-warning {
+  background-color: var(--color-warning);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

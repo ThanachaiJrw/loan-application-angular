@@ -1,0 +1,96 @@
+<form [formGroup]="form" class="row g-3">
+  <ng-container *ngFor="let field of config.fields">
+    <!-- Header -->
+    <div *ngIf="field.type === 'header'" class="col-12">
+      <h3>{{ field.label }}</h3>
+      <hr />
+    </div>
+
+    <!-- Footer -->
+    <div *ngIf="field.type === 'footer'" class="col-12">
+      <hr />
+      <p>{{ field.label }}</p>
+    </div>
+
+    <!-- Blank -->
+    <div
+      *ngIf="field.type === 'blank'"
+      [ngClass]="'col-span-' + (field.col || 3)"
+    ></div>
+
+    <!-- ALL Input -->
+    <div
+      *ngIf="
+        field.type === 'text' ||
+        field.type === 'number' ||
+        field.type === 'date' ||
+        field.type === 'textarea' ||
+        field.type === 'select'
+      "
+      [ngClass]="'col-span-' + (field.col || 3)"
+    >
+      <div>
+        <label>{{ field.label }}</label>
+        <div *ngIf="field.required" class="text-danger text-sm">*</div>
+      </div>
+
+      <!-- Input -->
+      <input
+        *ngIf="field.type !== 'textarea' && field.type !== 'select'"
+        [type]="field.type"
+        class="form-control"
+        [formControlName]="field.name"
+        [placeholder]="field.placeholder || ''"
+        [ngClass]="{
+          'is-invalid':
+            form.get(field.name)?.invalid && form.get(field.name)?.touched
+        }"
+      />
+
+      <!-- textarea -->
+      <textarea
+        *ngIf="field.type === 'textarea'"
+        class="form-control"
+        [formControlName]="field.name"
+        [placeholder]="field.placeholder || ''"
+        [ngClass]="{
+          'is-invalid':
+            form.get(field.name)?.invalid && form.get(field.name)?.touched
+        }"
+      ></textarea>
+
+      <!-- select -->
+      <select
+        *ngIf="field.type === 'select'"
+        class="form-control"
+        [formControlName]="field.name"
+      >
+        <option *ngFor="let opt of field.options" [value]="opt.value">
+          {{ opt.label }}
+        </option>
+      </select>
+
+      <!-- Error -->
+      <div
+        *ngIf="form.get(field.name)?.invalid && form.get(field.name)?.touched"
+        class="invalid-feedback"
+      >
+        <div *ngIf="form.get(field.name)?.hasError('required')">
+          กรุณากรอก {{ field.label }}
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <div class="col-span-12 flex gap-2 mt-4">
+    <button
+      *ngFor="let btn of config.buttons"
+      type="button"
+      class="btn"
+      [ngClass]="'btn-' + (btn.color || 'primary')"
+      (click)="onClick(btn.action, btn.requiresValidation)"
+    >
+      {{ btn.label }}
+    </button>
+  </div>
+</form>

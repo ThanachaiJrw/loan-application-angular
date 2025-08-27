@@ -1,0 +1,27 @@
+form {
+  margin: var(--spacing-md) 0;
+}
+
+label {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+h3 {
+  margin-top: var(--spacing-lg);
+  color: var(--color-second);
+}
+
+hr {
+  margin: var(--spacing-sm) 0;
+}
+
+/* input state */
+.is-invalid {
+  border-color: var(--color-danger);
+}
+
+.invalid-feedback {
+  color: var(--color-danger);
+  font-size: 0.875rem;
+}
