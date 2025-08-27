@@ -1,96 +1,121 @@
-<form [formGroup]="form" class="row g-3">
-  <ng-container *ngFor="let field of config.fields">
-    <!-- Header -->
-    <div *ngIf="field.type === 'header'" class="col-12">
-      <h3>{{ field.label }}</h3>
-      <hr />
-    </div>
-
-    <!-- Footer -->
-    <div *ngIf="field.type === 'footer'" class="col-12">
-      <hr />
-      <p>{{ field.label }}</p>
-    </div>
-
-    <!-- Blank -->
-    <div
-      *ngIf="field.type === 'blank'"
-      [ngClass]="'col-span-' + (field.col || 3)"
-    ></div>
-
-    <!-- ALL Input -->
-    <div
-      *ngIf="
-        field.type === 'text' ||
-        field.type === 'number' ||
-        field.type === 'date' ||
-        field.type === 'textarea' ||
-        field.type === 'select'
-      "
-      [ngClass]="'col-span-' + (field.col || 3)"
-    >
-      <div>
-        <label>{{ field.label }}</label>
-        <div *ngIf="field.required" class="text-danger text-sm">*</div>
+<form nz-form [formGroup]="form" class="w-100">
+  <div nz-row [nzGutter]="16">
+    <ng-container *ngFor="let field of config.fields">
+      <!-- Header -->
+      <div *ngIf="field.type === 'header'" nz-col [nzSpan]="24">
+        <h3 nz-typography>{{ field.label }}</h3>
+        <nz-divider></nz-divider>
       </div>
 
-      <!-- Input -->
-      <input
-        *ngIf="field.type !== 'textarea' && field.type !== 'select'"
-        [type]="field.type"
-        class="form-control"
-        [formControlName]="field.name"
-        [placeholder]="field.placeholder || ''"
-        [ngClass]="{
-          'is-invalid':
-            form.get(field.name)?.invalid && form.get(field.name)?.touched
-        }"
-      />
+      <!-- Footer -->
+      <div *ngIf="field.type === 'footer'" nz-col [nzSpan]="24">
+        <nz-divider></nz-divider>
+        <p>{{ field.label }}</p>
+      </div>
 
-      <!-- textarea -->
-      <textarea
-        *ngIf="field.type === 'textarea'"
-        class="form-control"
-        [formControlName]="field.name"
-        [placeholder]="field.placeholder || ''"
-        [ngClass]="{
-          'is-invalid':
-            form.get(field.name)?.invalid && form.get(field.name)?.touched
-        }"
-      ></textarea>
-
-      <!-- select -->
-      <select
-        *ngIf="field.type === 'select'"
-        class="form-control"
-        [formControlName]="field.name"
-      >
-        <option *ngFor="let opt of field.options" [value]="opt.value">
-          {{ opt.label }}
-        </option>
-      </select>
-
-      <!-- Error -->
+      <!-- Blank -->
       <div
-        *ngIf="form.get(field.name)?.invalid && form.get(field.name)?.touched"
-        class="invalid-feedback"
-      >
-        <div *ngIf="form.get(field.name)?.hasError('required')">
-          กรุณากรอก {{ field.label }}
-        </div>
-      </div>
-    </div>
-  </ng-container>
+        *ngIf="field.type === 'blank'"
+        nz-col
+        [nzSpan]="field.col || 3"
+      ></div>
 
-  <div class="col-span-12 flex gap-2 mt-4">
-    <button
-      *ngFor="let btn of config.buttons"
-      type="button"
-      class="btn"
-      [ngClass]="'btn-' + (btn.color || 'primary')"
-      (click)="onClick(btn.action, btn.requiresValidation)"
-    >
-      {{ btn.label }}
-    </button>
+      <!-- Input/Textarea/Select -->
+      <div
+        *ngIf="
+          field.type === 'text' ||
+          field.type === 'number' ||
+          field.type === 'date' ||
+          field.type === 'textarea' ||
+          field.type === 'select' ||
+          field.type === 'password'
+        "
+        nz-col
+        [nzSpan]="field.col || 6"
+      >
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24"
+            >{{ field.label }}
+            <div *ngIf="field.required" class="text-danger text-sm">
+              &thinsp;*
+            </div></nz-form-label
+          >
+
+          <nz-form-control
+            [nzValidateStatus]="getValidateStatus(field.name)"
+            [nzErrorTip]="getErrorTip(field.name, field.label)"
+          >
+            <!-- input -->
+            <input
+              *ngIf="
+                field.type === 'text' ||
+                field.type === 'number' ||
+                field.type === 'date'
+              "
+              nz-input
+              [type]="field.type"
+              [placeholder]="field.placeholder || ''"
+              [formControlName]="field.name"
+            />
+
+            <!-- Input Password -->
+            <div *ngIf="field.type === 'password'">
+              <nz-input-group [nzSuffix]="suffixTemplate">
+                <input
+                  [type]="passwordVisible ? 'text' : 'password'"
+                  nz-input
+                  [placeholder]="field.placeholder || ''"
+                  [formControlName]="field.name"
+                />
+              </nz-input-group>
+              <ng-template #suffixTemplate>
+                <nz-icon
+                  class="ant-input-password-icon"
+                  [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                  (click)="passwordVisible = !passwordVisible"
+                />
+              </ng-template>
+            </div>
+
+            <!-- textarea -->
+            <textarea
+              *ngIf="field.type === 'textarea'"
+              nz-input
+              [placeholder]="field.placeholder || ''"
+              [formControlName]="field.name"
+              rows="4"
+            ></textarea>
+
+            <!-- select -->
+            <nz-select
+              *ngIf="field.type === 'select'"
+              [formControlName]="field.name"
+              [nzPlaceHolder]="field.placeholder || ''"
+            >
+              <nz-option
+                *ngFor="let opt of field.options"
+                [nzValue]="opt.value"
+                [nzLabel]="opt.label"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </ng-container>
+
+    <!-- Buttons -->
+    <!-- [nzType]="btn.color || 'primary'" -->
+    <div nz-col [nzSpan]="24" class="mt-4">
+      <button
+        *ngFor="let btn of config.buttons"
+        nz-button
+        [nzType]="btn.color === 'primary' ? 'primary' : 'default'"
+        [nzDanger]="btn.color === 'danger'"
+        (click)="onClick(btn.action, btn.requiresValidation)"
+        class="me-2"
+      >
+        {{ btn.label }}
+      </button>
+    </div>
   </div>
 </form>

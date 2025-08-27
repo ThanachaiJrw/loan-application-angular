@@ -23,11 +23,13 @@
               }
             ],
             "styles": [
-              "node_modules/ng-zorro-antd/dist/ng-zorro-antd.min.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "src/styles/theme.less",
+              "src/theme.less",
               "src/styles.css"
-            ]
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": ["src"]
+            }
           },
           "configurations": {
             "production": {

@@ -1,10 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  FormGroupDirective,
-  NgForm,
-} from '@angular/forms';
+import { Component } from '@angular/core';
 import {
   DynamicForm,
   FormConfig,
