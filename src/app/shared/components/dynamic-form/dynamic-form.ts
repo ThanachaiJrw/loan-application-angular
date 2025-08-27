@@ -7,6 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { NzFormModule } from 'ng-zorro-antd/form';
 
 export type fieldType =
   | 'text'
@@ -24,7 +25,7 @@ export interface FormField {
   name: string;
   label?: string;
   placeholder?: string;
-  option?: { value: string; label: string }[];
+  options?: { value: string; label: string }[];
   col?: number;
   required?: boolean;
 }
@@ -44,7 +45,16 @@ export interface FormConfig {
 @Component({
   selector: 'app-dynamic-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    NzFormModule,
+    NzInputModule,
+    NzSelectModule,
+    NzButtonModule,
+    NzGridModule,
+    NzTypographyModule,
+  ],
   templateUrl: './dynamic-form.html',
   styleUrl: './dynamic-form.css',
 })
@@ -64,7 +74,7 @@ export class DynamicForm implements OnInit {
     this.form = new FormGroup(group);
   }
 
-  onClick(action: string, requiresValidation: boolean) {
+  onClick(action: string, requiresValidation: boolean = false) {
     if (requiresValidation && this.form.invalid) {
       this.form.markAllAsTouched();
       return;
