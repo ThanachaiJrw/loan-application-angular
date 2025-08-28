@@ -1,4 +1,31 @@
-<app-dynamic-form
-  [config]="loginFormConfig"
-  (formAction)="handleFormAction($event)"
-></app-dynamic-form>
+<div
+  class="container vh-100 d-flex align-items-center justify-content-center bg-body-background"
+>
+  <div class="row w-100">
+    <div class="col-md-6 d-none d-md-block p-0">
+      <img
+        src="assets/images/login-bg.svg"
+        class="img-fluid h-100 w-100 object-fit-cover"
+        alt="login background"
+      />
+    </div>
+
+    <div
+      class="col-md-6 d-flex align-items-center justify-content-center bg-light"
+    >
+      <div class="card p-5 shadow rounded-4 w-100" style="max-width: 420px">
+        <div class="text-center mb-4">
+          <h3 class="fw-bold text-primary">เข้าสู่ระบบ</h3>
+          <p class="text-muted">
+            ยินดีต้อนรับกลับมา กรุณาเข้าสู่ระบบเพื่อดำเนินการ
+          </p>
+        </div>
+
+        <app-dynamic-form
+          [config]="loginFormConfig"
+          (formAction)="handleFormAction($event)"
+        ></app-dynamic-form>
+      </div>
+    </div>
+  </div>
+</div>

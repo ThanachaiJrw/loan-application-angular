@@ -1,28 +1,13 @@
-:host {
-  display: flex;
-  justify-content: center;
-  margin: 100px 0px;
+.object-fit-cover {
+  object-fit: cover;
 }
 
-.mat-form-field {
-  width: 100%;
-  min-width: 300px;
+.card {
+  background: var(--card-background, #fff);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
-mat-card-title,
-mat-card-content {
-  display: flex;
-  justify-content: center;
-}
-
-.error {
-  padding: 16px;
-  width: 300px;
-  color: white;
-  background-color: red;
-}
-
-.button {
-  display: flex;
-  justify-content: flex-end;
+h3 {
+  color: var(--color-primary, #1976d2);
 }

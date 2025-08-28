@@ -8,3 +8,6 @@ h3 {
 .me-2 {
   margin-right: 0.5rem;
 }
+button[nz-button] {
+  min-width: 4.5vw;
+}

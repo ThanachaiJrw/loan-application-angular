@@ -17,7 +17,7 @@
       <div
         *ngIf="field.type === 'blank'"
         nz-col
-        [nzSpan]="field.col || 3"
+        [nzSpan]="field.col || 6"
       ></div>
 
       <!-- Input/Textarea/Select -->
@@ -36,14 +36,19 @@
         <nz-form-item>
           <nz-form-label [nzSpan]="24"
             >{{ field.label }}
-            <div *ngIf="field.required" class="text-danger text-sm">
+            <div
+              *ngIf="(field.validators ?? []).length > 0"
+              class="text-danger text-sm"
+            >
               &thinsp;*
-            </div></nz-form-label
-          >
+            </div>
+          </nz-form-label>
 
           <nz-form-control
             [nzValidateStatus]="getValidateStatus(field.name)"
-            [nzErrorTip]="getErrorTip(field.name, field.label)"
+            [nzErrorTip]="
+              field.showErrorTip !== false ? getErrorTip(field) : ''
+            "
           >
             <!-- input -->
             <input
@@ -104,8 +109,15 @@
     </ng-container>
 
     <!-- Buttons -->
-    <!-- [nzType]="btn.color || 'primary'" -->
-    <div nz-col [nzSpan]="24" class="mt-4">
+    <nz-row
+      class="mt-4 d-flex w-100"
+      [ngClass]="{
+        'justify-content-start': config.alignButtons === 'start',
+        'justify-content-center': config.alignButtons === 'center',
+        'justify-content-end':
+          !config.alignButtons || config.alignButtons === 'end'
+      }"
+    >
       <button
         *ngFor="let btn of config.buttons"
         nz-button
@@ -116,6 +128,6 @@
       >
         {{ btn.label }}
       </button>
-    </div>
+    </nz-row>
   </div>
 </form>
