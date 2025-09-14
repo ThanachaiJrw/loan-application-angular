@@ -3,6 +3,7 @@ import {
   DynamicForm,
   FormConfig,
 } from '../../shared/components/dynamic-form/dynamic-form';
+import { AuthService } from '../../core/services/auth';
 
 @Component({
   standalone: true,
@@ -12,6 +13,8 @@ import {
   styleUrl: './login.css',
 })
 export class LoginComponent {
+  constructor(private auth: AuthService) {}
+
   loginFormConfig: FormConfig = {
     fields: [
       {
@@ -55,7 +58,15 @@ export class LoginComponent {
     switch (event.action) {
       case 'save':
         console.log('Login data:', event.value);
-        // TODO: เรียก API login
+        this.auth.login(event.value).subscribe({
+          next: (response) => {
+            console.log('Login successful:', response);
+            // Redirect to dashboard or another page if needed
+          },
+          error: (error) => {
+            console.error('Login failed:', error);
+          },
+        });
         break;
       case 'reset':
         console.log('Form reset สำเร็จ');
