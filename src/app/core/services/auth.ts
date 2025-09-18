@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { ApiService } from './api';
+import { ApiResponse, ApiService } from './api';
 import { TokenService } from './token';
 import { Observable, tap } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 export interface LoginRequest {
   username: string;
@@ -20,27 +21,34 @@ export class AuthService {
   // Authentication related methods will go here
   constructor(private api: ApiService, private tokenService: TokenService) {}
 
-  login(data: LoginRequest): Observable<LoginResponse> {
-    return this.api.post<LoginResponse>('auth/login', data).pipe(
+  login(dataLogin: LoginRequest): Observable<ApiResponse> {
+    return this.api.post<ApiResponse>('auth/login', dataLogin).pipe(
       tap((response) => {
-        if (response.refreshToken)
-          this.tokenService.setRefreshToken(response.refreshToken);
-        if (response.accessToken)
-          this.tokenService.setAccessToken(response.accessToken);
+        if (response.statusCode === 200) {
+          const data: LoginResponse = response.data;
+          console.log('################# Login response:', response.data);
+          if (data.refreshToken)
+            this.tokenService.setRefreshToken(data.refreshToken);
+          if (data.accessToken)
+            this.tokenService.setAccessToken(data.accessToken);
+        }
       })
     );
   }
 
-  refreshToken(): Observable<LoginResponse> {
+  refreshToken(): Observable<ApiResponse> {
     const refreshToken = this.tokenService.getRefreshToken();
     return this.api
-      .post<LoginResponse>('auth/refresh-token', { refreshToken })
+      .post<ApiResponse>('auth/refresh-token', { refreshToken })
       .pipe(
         tap((response) => {
-          if (response.accessToken)
-            this.tokenService.setAccessToken(response.accessToken);
-          if (response.refreshToken)
-            this.tokenService.setRefreshToken(response.refreshToken);
+          if (response.statusCode === 200) {
+            const data: LoginResponse = response.data;
+            if (data.refreshToken)
+              this.tokenService.setRefreshToken(data.refreshToken);
+            if (data.accessToken)
+              this.tokenService.setAccessToken(data.accessToken);
+          }
         })
       );
   }

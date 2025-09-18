@@ -4,6 +4,8 @@ import {
   FormConfig,
 } from '../../shared/components/dynamic-form/dynamic-form';
 import { AuthService } from '../../core/services/auth';
+import { routes } from '../../app.routes';
+import { Router } from '@angular/router';
 
 @Component({
   standalone: true,
@@ -13,7 +15,7 @@ import { AuthService } from '../../core/services/auth';
   styleUrl: './login.css',
 })
 export class LoginComponent {
-  constructor(private auth: AuthService) {}
+  constructor(private auth: AuthService, private router: Router) {}
 
   loginFormConfig: FormConfig = {
     fields: [
@@ -62,6 +64,7 @@ export class LoginComponent {
           next: (response) => {
             console.log('Login successful:', response);
             // Redirect to dashboard or another page if needed
+            this.router.navigate(['/']);
           },
           error: (error) => {
             console.error('Login failed:', error);
