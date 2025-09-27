@@ -6,6 +6,7 @@ import {
 import { AuthService } from '../../core/services/auth';
 import { routes } from '../../app.routes';
 import { Router } from '@angular/router';
+import { Alert } from '../../shared/components/alert/alert';
 
 @Component({
   standalone: true,
@@ -15,7 +16,11 @@ import { Router } from '@angular/router';
   styleUrl: './login.css',
 })
 export class LoginComponent {
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(
+    private auth: AuthService,
+    private router: Router,
+    private alert: Alert
+  ) {}
 
   loginFormConfig: FormConfig = {
     fields: [
@@ -62,11 +67,13 @@ export class LoginComponent {
         console.log('Login data:', event.value);
         this.auth.login(event.value).subscribe({
           next: (response) => {
+            this.alert.success(response.message);
             console.log('Login successful:', response);
             // Redirect to dashboard or another page if needed
             this.router.navigate(['/']);
           },
           error: (error) => {
+            this.alert.error('Login ไม่สำเร็จ');
             console.error('Login failed:', error);
           },
         });

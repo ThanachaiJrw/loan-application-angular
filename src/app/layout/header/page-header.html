@@ -1,0 +1,9 @@
+<div class="page-header">
+  <h2>{{ title }}</h2>
+  <nav class="breadcrumb">
+    <ng-container *ngFor="let crumb of breadcrumb; let i = index">
+      <span>{{ crumb }}</span>
+      <span *ngIf="i < breadcrumb.length - 1"> / </span>
+    </ng-container>
+  </nav>
+</div>

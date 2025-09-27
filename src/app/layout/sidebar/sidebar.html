@@ -1,0 +1,91 @@
+<nz-layout class="main-layout">
+  <nz-sider
+    class="sidebar"
+    [class.collapsed]="isCollapsed"
+    nzCollapsible
+    [(nzCollapsed)]="isCollapsed"
+    nzWidth="200px"
+    nzCollapsedWidth="80"
+  >
+    <!-- Brand/Logo Area -->
+    <div class="brand-area">
+      <div class="brand-logo">
+        <span nz-icon nzType="dashboard"></span>
+      </div>
+      <span class="brand-text">Admin Panel</span>
+    </div>
+
+    <!-- Main Menu -->
+    <ul
+      nz-menu
+      .
+      nzTheme="dark"
+      nzMode="inline"
+      class="main-menu"
+      [nzInlineCollapsed]="isCollapsed"
+    >
+      <!-- Simple Menu Items -->
+      <li
+        nz-menu-item
+        *ngFor="let menu of simpleMenus"
+        [routerLink]="menu.route"
+        routerLinkActive="ant-menu-item-selected"
+      >
+        <span nz-icon [nzType]="menu.icon" class="menu-icon"></span>
+        <span class="menu-text">{{ menu.label }}</span>
+      </li>
+
+      <!-- Submenu Items -->
+      <ng-container *ngFor="let parent of menusWithChildren">
+        <li nz-submenu *ngIf="parent.children?.length" [nzOpen]="!isCollapsed">
+          <span title>
+            <span nz-icon [nzType]="parent.icon" class="menu-icon"></span>
+            <span class="menu-text">{{ parent.label }}</span>
+          </span>
+          <ul>
+            <li
+              *ngFor="let child of parent.children"
+              nz-menu-item
+              [routerLink]="child.route"
+              routerLinkActive="ant-menu-item-selected"
+            >
+              <span class="menu-text">{{ child.label }}</span>
+            </li>
+          </ul>
+        </li>
+      </ng-container>
+
+      <!-- Logout Button -->
+      <li nz-menu-item class="logout-btn" (click)="logout()">
+        <span nz-icon nzType="logout" class="menu-icon"></span>
+        <span class="menu-text">Logout</span>
+      </li>
+    </ul>
+
+    <!-- Custom Collapse Trigger -->
+    <div class="collapse-trigger" (click)="toggleCollapse()">
+      <span nz-icon [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"></span>
+    </div>
+  </nz-sider>
+
+  <nz-layout class="content-layout">
+    <!-- Content Header -->
+    <nz-header class="content-header">
+      <h1 class="content-title">{{ currentPageTitle }}</h1>
+      <div>
+        <nz-avatar nzIcon="user"></nz-avatar>
+        <span style="margin-left: 12px; color: white">{{ currentUser }}</span>
+      </div>
+    </nz-header>
+
+    <!-- Main Content -->
+    <nz-content class="content-body">
+      <!-- Loading Overlay -->
+      <div *ngIf="isLoading" class="loading-overlay">
+        <nz-spin nzSize="large"></nz-spin>
+      </div>
+
+      <router-outlet></router-outlet>
+    </nz-content>
+  </nz-layout>
+</nz-layout>

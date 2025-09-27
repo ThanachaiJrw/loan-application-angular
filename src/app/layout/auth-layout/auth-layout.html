@@ -1,2 +1,39 @@
-<app-sidebar></app-sidebar>
-<p>auth-layout works!</p>
+<nz-layout>
+  <nz-sider nzCollapsible nzWidth="200px">
+    <ul nz-menu nzTheme="dark" nzMode="inline">
+      <li nz-menu-item *ngFor="let menu of menus" \ [routerLink]="menu.route">
+        <span nz-icon [nzType]="menu.icon || ''"></span>
+        <span>{{ menu.label }}</span>
+      </li>
+
+      <<ng-container *ngFor="let parent of menus">
+        <li nz-submenu *ngIf="parent.children?.length">
+          <span title>
+            <span nz-icon [nzType]="parent.icon || ''"></span>
+            <span>{{ parent.label }}</span>
+          </span>
+          <ul>
+            <li
+              *ngFor="let child of parent.children"
+              nz-menu-item
+              [routerLink]="child.route"
+            >
+              {{ child.label }}
+            </li>
+          </ul>
+        </li>
+      </ng-container>
+
+      <li nz-menu-item (click)="logout()">
+        <span nz-icon nzType="logout"></span>
+        <span>Logout</span>
+      </li>
+    </ul>
+  </nz-sider>
+
+  <nz-layout>
+    <nz-content style="padding: 24px">
+      <router-outlet></router-outlet>
+    </nz-content>
+  </nz-layout>
+</nz-layout>

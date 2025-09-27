@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ApiResponse, ApiService } from './api';
 import { TokenService } from './token';
-import { Observable, tap } from 'rxjs';
+import { firstValueFrom, Observable, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 export interface LoginRequest {
   username: string;
@@ -19,7 +20,11 @@ export interface LoginResponse {
 })
 export class AuthService {
   // Authentication related methods will go here
-  constructor(private api: ApiService, private tokenService: TokenService) {}
+  constructor(
+    private api: ApiService,
+    private tokenService: TokenService,
+    private router: Router
+  ) {}
 
   login(dataLogin: LoginRequest): Observable<ApiResponse> {
     return this.api.post<ApiResponse>('auth/login', dataLogin).pipe(
@@ -53,9 +58,15 @@ export class AuthService {
       );
   }
 
-  logout(): void {
-    this.tokenService.clearTokens();
-    // Optionally, you can also notify the backend about the logout
+  async logout(): Promise<void> {
+    try {
+      const response = await firstValueFrom(this.api.post('auth/logout', {}));
+      console.log('Logout successful:', response);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+    await this.tokenService.clearTokens();
+    await this.router.navigate(['/login']);
   }
 
   isAuthenticated(): boolean {
