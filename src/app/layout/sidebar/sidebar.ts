@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, computed, OnInit, signal } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { NzAvatarComponent } from 'ng-zorro-antd/avatar';
@@ -13,35 +13,13 @@ import {
 } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzSpinComponent } from 'ng-zorro-antd/spin';
-
-interface NavItem {
-  label: string;
-  icon: string;
-  route: string;
-  roles: string[]; // role ที่มองเห็นได้
-}
-
-export const NAV_ITEMS: NavItem[] = [
-  {
-    label: 'Dashboard',
-    icon: 'home',
-    route: '/dashboard',
-    roles: ['ADMIN', 'USER', 'MANAGER'],
-  },
-  { label: 'Users', icon: 'group', route: '/admin/users', roles: ['ADMIN'] },
-  {
-    label: 'Reports',
-    icon: 'bar_chart',
-    route: '/reports',
-    roles: ['ADMIN', 'MANAGER'],
-  },
-  {
-    label: 'Profile',
-    icon: 'person',
-    route: '/profile',
-    roles: ['USER', 'ADMIN', 'MANAGER'],
-  },
-];
+import { MenuItem } from '../../config/menu.config';
+import { MenuService } from '../../core/services/menu';
+import { AuthService } from '../../core/services/auth';
+import {
+  NzBreadCrumbComponent,
+  NzBreadCrumbItemComponent,
+} from 'ng-zorro-antd/breadcrumb';
 
 @Component({
   selector: 'app-sidebar',
@@ -58,50 +36,143 @@ export const NAV_ITEMS: NavItem[] = [
     NzContentComponent,
     NzSpinComponent,
     RouterOutlet,
+    NzBreadCrumbComponent,
+    NzBreadCrumbItemComponent,
   ],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css',
 })
 export class Sidebar implements OnInit {
-  filteredNav: NavItem[] = [];
-
-  ngOnInit() {
-    const token = localStorage.getItem('access_token');
-    if (!token) return;
-
-    const decoded: any = jwtDecode(token);
-    const role = decoded.role;
-    this.filteredNav = NAV_ITEMS.filter((item) => item.roles.includes(role));
-  }
-
-  isCollapsed = false;
+  menus: MenuItem[] = [];
+  // isCollapsed = false;
+  isCollapsed = signal(false);
   isLoading = false;
   currentUser = 'Admin User';
+  currentUserRole = 'admin';
   currentPageTitle = 'Dashboard';
+  openSubmenus = signal<string[]>([]);
+  filteredMenus = signal<MenuItem[]>([]);
+  simpleMenus = computed(() =>
+    this.filteredMenus().filter((menu) => !menu.children?.length)
+  );
+  menusWithChildren = computed(() =>
+    this.filteredMenus().filter((menu) => menu.children?.length)
+  );
 
-  // แยก menus ออกเป็น 2 ประเภท
-  simpleMenus = [
-    { label: 'Dashboard', route: '/dashboard', icon: 'dashboard' },
-    { label: 'Profile', route: '/profile', icon: 'user' },
-  ];
+  constructor(
+    private menuService: MenuService,
+    private authService: AuthService
+  ) {}
 
-  menusWithChildren = [
-    {
-      label: 'Management',
-      icon: 'setting',
-      children: [
-        { label: 'Users', route: '/users' },
-        { label: 'Roles', route: '/roles' },
-      ],
-    },
-  ];
-
-  toggleCollapse(): void {
-    this.isCollapsed = !this.isCollapsed;
+  ngOnInit() {
+    this.menuService.menus$.subscribe((menus) => {
+      console.log('### menus from service: ', menus);
+      this.menus = menus;
+    });
+    this.filteredMenus.set(
+      this.filterMenusByRole(this.menus, this.currentUserRole)
+    );
+    // const token = localStorage.getItem('access_token');
+    // if (!token) return;
+    // const decoded: any = jwtDecode(token);
+    // const role = decoded.role;
+    // this.filteredNav = NAV_ITEMS.filter((item) => item.roles.includes(role));
   }
 
-  logout(): void {
-    // Logout logic here
-    console.log('Logout clicked');
+  toggleSubmenu(label: string) {
+    const current = this.openSubmenus();
+    if (current.includes(label)) {
+      this.openSubmenus.set(current.filter((l) => l !== label));
+    } else {
+      this.openSubmenus.set([...current, label]);
+    }
+  }
+
+  toggleCollapse(): void {
+    // this.isCollapsed = !this.isCollapsed;
+    this.isCollapsed.set(!this.isCollapsed());
+  }
+
+  getMenuInitials(label: string): string {
+    if (!label) return '';
+
+    const words = label.split(' ');
+    if (words.length === 1) {
+      // ถ้าเป็นคำเดียว ให้เอา 2 ตัวแรก
+      return words[0].substring(0, 2).toUpperCase();
+    } else {
+      // ถ้าเป็นหลายคำ ให้เอาตัวแรกของแต่ละคำ
+      return words
+        .map((word) => word.charAt(0))
+        .join('')
+        .substring(0, 2)
+        .toUpperCase();
+    }
+  }
+
+  logout() {
+    this.authService.logout();
+  }
+
+  // Filter menus ตาม role ของ user
+  // get filteredMenus(): MenuItem[] {
+  //   return this.filterMenusByRole(this.menus, this.currentUserRole);
+  // }
+
+  // // Get simple menus (ไม่มี children)
+  // get simpleMenus(): MenuItem[] {
+  //   const menus = this.filteredMenus.filter((menu) => !menu.children?.length);
+  //   console.log('### simpleMenus: ', menus);
+  //   return menus;
+  //   // return this.filteredMenus.filter((menu) => !menu.children?.length);
+  // }
+
+  // // Get menus with children
+  // get menusWithChildren(): MenuItem[] {
+  //   const menuChild = this.filteredMenus.filter(
+  //     (menu) => menu.children?.length
+  //   );
+  //   console.log('### menusWithChildren: ', menuChild);
+  //   return menuChild;
+  //   // return this.filteredMenus.filter((menu) => menu.children?.length);
+  // }
+
+  private filterMenusByRole(menus: MenuItem[], userRole: string): MenuItem[] {
+    return menus
+      .filter((menu) => menu.roles.includes(userRole))
+      .map((menu) => ({
+        ...menu,
+        children: menu.children
+          ? this.filterMenusByRole(menu.children, userRole)
+          : undefined,
+      }))
+      .filter((menu) => !menu.children || menu.children.length > 0); // Remove empty parent menus
+  }
+
+  // Check if user has permission to access menu
+  hasPermission(menu: MenuItem): boolean {
+    return menu.roles.includes(this.currentUserRole);
+  }
+
+  // Get current page title based on route
+  updatePageTitle(route: string): void {
+    const findMenuByRoute = (
+      menus: MenuItem[],
+      targetRoute: string
+    ): MenuItem | null => {
+      for (const menu of menus) {
+        if (menu.route === targetRoute) {
+          return menu;
+        }
+        if (menu.children) {
+          const found = findMenuByRoute(menu.children, targetRoute);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+
+    const currentMenu = findMenuByRoute(this.menus, route);
+    this.currentPageTitle = currentMenu?.label || 'Dashboard';
   }
 }

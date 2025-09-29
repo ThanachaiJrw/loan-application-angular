@@ -1,80 +1,141 @@
 <nz-layout class="main-layout">
   <nz-sider
     class="sidebar"
-    [class.collapsed]="isCollapsed"
     nzCollapsible
-    [(nzCollapsed)]="isCollapsed"
+    [nzCollapsed]="isCollapsed()"
+    (nzCollapsedChange)="isCollapsed.set($event)"
     nzWidth="200px"
-    nzCollapsedWidth="80"
+    [nzCollapsedWidth]="80"
+    [nzTrigger]="null"
   >
-    <!-- Brand/Logo Area -->
-    <div class="brand-area">
-      <div class="brand-logo">
-        <span nz-icon nzType="dashboard"></span>
+    <!-- [class.collapsed]="isCollapsed" -->
+    <!-- Sidebar Header -->
+    <div class="sidebar-header">
+      <div class="brand-area">
+        <div class="brand-logo">
+          <nz-icon nzType="dashboard" nzTheme="outline"></nz-icon>
+        </div>
+        <span class="brand-text">Admin Panel</span>
       </div>
-      <span class="brand-text">Admin Panel</span>
     </div>
 
-    <!-- Main Menu -->
-    <ul
-      nz-menu
-      .
-      nzTheme="dark"
-      nzMode="inline"
-      class="main-menu"
-      [nzInlineCollapsed]="isCollapsed"
-    >
-      <!-- Simple Menu Items -->
-      <li
-        nz-menu-item
-        *ngFor="let menu of simpleMenus"
-        [routerLink]="menu.route"
-        routerLinkActive="ant-menu-item-selected"
+    <!-- Bug inside this you can do this!!!!  -->
+    <!-- Sidebar Navigator -->
+    <div class="sidebar-navigator">
+      <ul
+        nz-menu
+        nzTheme="dark"
+        nzMode="inline"
+        class="main-menu"
+        [nzInlineCollapsed]="isCollapsed()"
       >
-        <span nz-icon [nzType]="menu.icon" class="menu-icon"></span>
-        <span class="menu-text">{{ menu.label }}</span>
-      </li>
+        <!-- Simple Menu Items (ไม่มี children) -->
+        <li
+          nz-menu-item
+          *ngFor="let menu of simpleMenus()"
+          [routerLink]="menu.route"
+          [class.menu-item-no-icon]="!menu.icon"
+          routerLinkActive="ant-menu-item-selected"
+        >
+          <!-- With Icon -->
+          <ng-container *ngIf="menu.icon">
+            <span nz-icon [nzType]="menu.icon" class="menu-icon"></span>
+            <span class="menu-text">{{ menu.label }}</span>
+          </ng-container>
 
-      <!-- Submenu Items -->
-      <ng-container *ngFor="let parent of menusWithChildren">
-        <li nz-submenu *ngIf="parent.children?.length" [nzOpen]="!isCollapsed">
+          <!-- Without Icon - Show first letter(s) -->
+          <ng-container *ngIf="!menu.icon">
+            <span class="menu-placeholder">{{
+              getMenuInitials(menu.label)
+            }}</span>
+            <span class="menu-text">{{ menu.label }}</span>
+          </ng-container>
+        </li>
+
+        <!-- Submenu Items (มี children) -->
+        <!-- <ng-container *ngFor="let parent of menusWithChildren"> -->
+        <li
+          nz-menu-item
+          *ngFor="let parent of menusWithChildren()"
+          [title]="parent.label"
+          [class.menu-item-no-icon]="!parent.icon"
+        >
+          <!-- nz-submenu -->
+          <!-- Parent -->
           <span title>
-            <span nz-icon [nzType]="parent.icon" class="menu-icon"></span>
+            <!-- Parent with Icon -->
+            <ng-container *ngIf="parent.icon">
+              <span nz-icon [nzType]="parent.icon" class="menu-icon"></span>
+            </ng-container>
+
+            <!-- Parent without Icon -->
+            <ng-container *ngIf="!parent.icon">
+              <span class="menu-placeholder">{{
+                getMenuInitials(parent.label)
+              }}</span>
+            </ng-container>
             <span class="menu-text">{{ parent.label }}</span>
           </span>
+
+          <!-- Children Menu Items -->
           <ul>
             <li
               *ngFor="let child of parent.children"
               nz-menu-item
               [routerLink]="child.route"
               routerLinkActive="ant-menu-item-selected"
+              [title]="child.label"
             >
               <span class="menu-text">{{ child.label }}</span>
             </li>
           </ul>
         </li>
-      </ng-container>
+        <!-- </ng-container> -->
+      </ul>
+    </div>
 
-      <!-- Logout Button -->
-      <li nz-menu-item class="logout-btn" (click)="logout()">
-        <span nz-icon nzType="logout" class="menu-icon"></span>
-        <span class="menu-text">Logout</span>
-      </li>
-    </ul>
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer">
+      <div class="footer-actions">
+        <!-- Logout Button -->
+        <div class="logout-btn" (click)="logout()" title="Logout">
+          <span nz-icon nzType="logout" class="menu-icon"></span>
+          <span class="menu-text">Logout</span>
+        </div>
 
-    <!-- Custom Collapse Trigger -->
-    <div class="collapse-trigger" (click)="toggleCollapse()">
-      <span nz-icon [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"></span>
+        <!-- Collapse Trigger -->
+        <div
+          class="collapse-trigger"
+          (click)="toggleCollapse()"
+          [title]="isCollapsed() ? 'Expand Menu' : 'Collapse Menu'"
+        >
+          <span
+            nz-icon
+            [nzType]="isCollapsed() ? 'menu-unfold' : 'menu-fold'"
+          ></span>
+        </div>
+      </div>
     </div>
   </nz-sider>
 
   <nz-layout class="content-layout">
     <!-- Content Header -->
     <nz-header class="content-header">
-      <h1 class="content-title">{{ currentPageTitle }}</h1>
-      <div>
-        <nz-avatar nzIcon="user"></nz-avatar>
-        <span style="margin-left: 12px; color: white">{{ currentUser }}</span>
+      <div class="header-left">
+        <h1 class="content-title">{{ currentPageTitle }}</h1>
+        <nz-breadcrumb class="breadcrumb">
+          <nz-breadcrumb-item>Home</nz-breadcrumb-item>
+          <nz-breadcrumb-item>{{ currentPageTitle }}</nz-breadcrumb-item>
+        </nz-breadcrumb>
+      </div>
+
+      <div class="header-right">
+        <!-- User Info -->
+        <div class="user-info">
+          <span class="user-role">{{ currentUserRole | titlecase }}</span>
+          <nz-avatar nzIcon="user" [nzSize]="36"></nz-avatar>
+          <span class="user-name">{{ currentUser }}</span>
+        </div>
       </div>
     </nz-header>
 
@@ -82,7 +143,7 @@
     <nz-content class="content-body">
       <!-- Loading Overlay -->
       <div *ngIf="isLoading" class="loading-overlay">
-        <nz-spin nzSize="large"></nz-spin>
+        <nz-spin nzSize="large" nzTip="Loading..."></nz-spin>
       </div>
 
       <router-outlet></router-outlet>

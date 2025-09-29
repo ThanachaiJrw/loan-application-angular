@@ -8,7 +8,9 @@ import { Observable } from 'rxjs';
 })
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
-  canActivate():
+  canActivate(
+    route: any
+  ):
     | boolean
     | UrlTree
     | Observable<boolean | UrlTree>
@@ -17,6 +19,7 @@ export class AuthGuard implements CanActivate {
     if (!isAuthenticated) {
       return this.router.navigate(['/login']);
     }
+    // const allowedRoles = route.data?.['roles'] as Array<string>;
     return true;
   }
 }
