@@ -14,9 +14,11 @@ import {
   HTTP_INTERCEPTORS,
 } from '@angular/common/http';
 import { AuthInterceptor } from './core/interceptors/auth';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideAnimations(),
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     // provideRouter([...routes, ...LoginRoutes]),
