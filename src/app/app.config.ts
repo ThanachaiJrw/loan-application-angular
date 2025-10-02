@@ -15,11 +15,29 @@ import {
 } from '@angular/common/http';
 import { AuthInterceptor } from './core/interceptors/auth';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideNzIcons } from 'ng-zorro-antd/icon';
+import { IconDefinition } from '@ant-design/icons-angular';
+import {
+  DashboardOutline,
+  HomeOutline,
+  LogoutOutline,
+  MenuFoldOutline,
+  UserOutline,
+} from '@ant-design/icons-angular/icons';
+
+const icons: IconDefinition[] = [
+  DashboardOutline,
+  UserOutline,
+  LogoutOutline,
+  MenuFoldOutline,
+  HomeOutline,
+];
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideAnimations(),
     provideBrowserGlobalErrorListeners(),
+    provideNzIcons(icons),
     provideZoneChangeDetection({ eventCoalescing: true }),
     // provideRouter([...routes, ...LoginRoutes]),
     provideRouter(routes),

@@ -1,4 +1,4 @@
-import { Component, computed, OnInit, signal } from '@angular/core';
+import { Component, computed, OnDestroy, OnInit, signal } from '@angular/core';
 import { MenuItem } from '../../config/menu.config';
 import { AuthService } from '../../core/services/auth';
 import {
@@ -7,7 +7,12 @@ import {
   NzLayoutComponent,
   NzSiderComponent,
 } from 'ng-zorro-antd/layout';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import {
+  NavigationEnd,
+  Router,
+  RouterLink,
+  RouterOutlet,
+} from '@angular/router';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { CommonModule } from '@angular/common';
@@ -19,6 +24,8 @@ import {
 } from 'ng-zorro-antd/breadcrumb';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { MenuService } from '../../core/services/menu';
+import { jwtDecode } from 'jwt-decode';
+import { filter, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-auth-layout',
@@ -41,14 +48,17 @@ import { MenuService } from '../../core/services/menu';
   templateUrl: './auth-layout.html',
   styleUrl: './auth-layout.css',
 })
-export class AuthLayout implements OnInit {
+export class AuthLayout implements OnInit, OnDestroy {
   menus: MenuItem[] = [];
   // isCollapsed = false;
   isCollapsed = signal(false);
   isLoading = false;
-  currentUser = 'Admin User';
-  currentUserRole = 'admin';
-  currentPageTitle = 'Dashboard';
+  currentUser = '';
+  currentUserRole = '';
+  currentPageTitle = 'Home';
+  breadcrumbs: { label: string; url: string }[] = [];
+
+  private subscription!: Subscription;
   openSubmenus = signal<string[]>([]);
   filteredMenus = signal<MenuItem[]>([]);
   simpleMenus = computed(() =>
@@ -60,7 +70,8 @@ export class AuthLayout implements OnInit {
 
   constructor(
     private menuService: MenuService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   // เหลือ fix css ให้สวยๆ
@@ -69,14 +80,47 @@ export class AuthLayout implements OnInit {
       console.log('### menus from service: ', menus);
       this.menus = menus;
     });
+    this.initUserDetail(localStorage.getItem('access_token'));
+
+    this.subscription = this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.initPageTitleFromRoute();
+      });
+
+    // initial load
+    this.initPageTitleFromRoute();
+  }
+
+  ngOnDestroy(): void {
+    // unsubscribe กัน memory leak
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+
+  initUserDetail(token: string | null) {
+    if (!token) return;
+    const decoded: any = jwtDecode(token);
+    this.currentUserRole = decoded.role || 'Admin';
+    this.currentUser = decoded.name || 'Admin User';
     this.filteredMenus.set(
-      this.filterMenusByRole(this.menus, this.currentUserRole)
+      this.filterMenusByRole(this.menus, decoded.role || 'Admin')
     );
-    // const token = localStorage.getItem('access_token');
-    // if (!token) return;
-    // const decoded: any = jwtDecode(token);
-    // const role = decoded.role;
-    // this.filteredNav = NAV_ITEMS.filter((item) => item.roles.includes(role));
+  }
+
+  initPageTitleFromRoute() {
+    const url = this.router.url.split('?')[0];
+    let segments = url.split('/').filter((seg) => seg);
+    if (url === '/' || url === '' || segments.length === 0) {
+      this.currentPageTitle = 'Welcome to Angular Loan Application';
+    }
+    this.breadcrumbs = segments.map((seg, index) => {
+      return {
+        label: seg,
+        url: '/' + segments.slice(0, index + 1).join('/'),
+      };
+    });
   }
 
   toggleSubmenu(label: string) {
@@ -115,6 +159,8 @@ export class AuthLayout implements OnInit {
   }
 
   private filterMenusByRole(menus: MenuItem[], userRole: string): MenuItem[] {
+    console.log('###### Filtering menus for role:', userRole);
+    console.log('###### Filtering menus for menus:', menus);
     return menus
       .filter((menu) => menu.roles.includes(userRole))
       .map((menu) => ({

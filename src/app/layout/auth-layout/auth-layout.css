@@ -1,4 +1,8 @@
-/* Layout Styles */
+/* ============================================
+   ENHANCED LAYOUT STYLES - Modern Admin Panel
+   ============================================ */
+
+/* Main Layout */
 .main-layout {
   min-height: 100vh;
   background: var(--body-background);
@@ -6,94 +10,172 @@
     "Helvetica Neue", Arial, sans-serif;
 }
 
+/* ============================================
+   SIDEBAR - Enhanced Design
+   ============================================ */
 .sidebar {
-  background: var(--dark-bg);
-  box-shadow: var(--shadow-medium);
-  border-right: 1px solid var(--border-color);
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(180deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+  box-shadow: 4px 0 24px rgba(13, 71, 161, 0.15);
+  border-right: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   display: flex;
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
+  z-index: 100;
 }
 
-.sidebar.collapsed {
-  width: 80px !important;
+.sidebar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: radial-gradient(
+    ellipse at top,
+    rgba(114, 46, 209, 0.15),
+    transparent
+  );
+  pointer-events: none;
 }
 
-/* Sidebar Structure */
+/* ============================================
+   SIDEBAR HEADER - Brand Area
+   ============================================ */
 .sidebar-header {
   flex-shrink: 0;
   height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  z-index: 1;
 }
 
-.sidebar-navigator {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: var(--spacing-md) 0;
-}
-
-.sidebar-footer {
-  flex-shrink: 0;
-  height: 80px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 var(--spacing-md);
-  gap: var(--spacing-sm);
-}
-
-/* Logo/Brand Area */
 .brand-area {
-  height: 64px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.1);
-  margin: 16px;
-  border-radius: 8px;
-  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.05);
+  margin: 0 16px;
+  border-radius: 12px;
+  backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0 12px;
+}
+
+.brand-area:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .brand-logo {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   background: linear-gradient(
     135deg,
-    var(--primary-color),
-    var(--secondary-color)
+    var(--color-primary),
+    var(--color-secondary)
   );
-  border-radius: 8px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 12px;
   color: white;
   font-weight: bold;
+  font-size: 20px;
+  box-shadow: 0 4px 12px rgba(13, 71, 161, 0.3);
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.brand-logo:hover {
+  transform: rotate(5deg) scale(1.05);
 }
 
 .brand-text {
   color: white;
   font-size: 18px;
-  font-weight: 600;
-  transition: opacity 0.3s ease;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #ffffff, rgba(255, 255, 255, 0.8));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-left: 12px;
+  white-space: nowrap;
 }
 
-.sidebar.collapsed .brand-text {
+/* Collapsed State - Show only logo */
+.sidebar.ant-layout-sider-collapsed .brand-area {
+  margin: 12px;
+  padding: 12px;
+  justify-content: center;
+}
+
+.sidebar.ant-layout-sider-collapsed .brand-logo {
+  margin-right: 0;
+}
+.sidebar.ant-layout-sider-collapsed .brand-text {
   opacity: 0;
   width: 0;
+  margin-left: 0;
   overflow: hidden;
 }
 
-/* Menu Styles - ใน Navigator */
+/* ============================================
+   SIDEBAR NAVIGATOR - Menu Container
+   ============================================ */
+.sidebar-navigator {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* Custom Scrollbar for Navigator */
+.sidebar-navigator::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-navigator::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+  margin: 8px 0;
+}
+
+.sidebar-navigator::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    var(--color-primary),
+    var(--color-secondary)
+  );
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+.sidebar-navigator::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    var(--color-secondary),
+    var(--color-primary)
+  );
+}
+
+/* ============================================
+   MENU ITEMS - Enhanced Styling
+   ============================================ */
 .main-menu {
   border-right: none !important;
   background: transparent;
@@ -104,44 +186,74 @@
 
 .main-menu .ant-menu-item,
 .main-menu .ant-menu-submenu-title {
-  margin: 4px var(--spacing-sm);
-  border-radius: var(--border-radius);
+  margin: 6px 12px;
+  border-radius: 10px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
   height: auto;
-  line-height: 1.4;
-  padding: 12px var(--spacing-md);
-  color: var(--text-light);
+  line-height: 1.5;
+  padding: 14px 16px;
+  color: rgba(255, 255, 255, 0.8);
   border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.02);
 }
 
+/* Hover Effect with Glow */
 .main-menu .ant-menu-item:hover,
 .main-menu .ant-menu-submenu-title:hover {
   background: linear-gradient(
     135deg,
+    rgba(13, 71, 161, 0.3),
+    rgba(114, 46, 209, 0.25)
+  );
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px rgba(13, 71, 161, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.main-menu .ant-menu-item:hover::before,
+.main-menu .ant-menu-submenu-title:hover::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
     var(--color-primary),
     var(--color-secondary)
   );
-  transform: translateX(4px);
-  box-shadow: var(--shadow-light);
-  border-color: rgba(255, 255, 255, 0.1);
+  border-radius: 0 2px 2px 0;
 }
 
+/* Selected State */
 .main-menu .ant-menu-item-selected {
   background: linear-gradient(
     135deg,
     var(--color-primary),
     var(--color-secondary)
   ) !important;
-  box-shadow: var(--shadow-medium);
+  box-shadow: 0 6px 20px rgba(13, 71, 161, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.2);
+  color: white !important;
+  transform: translateX(2px);
 }
 
 .main-menu .ant-menu-item-selected::after {
   display: none;
 }
 
+.main-menu .ant-menu-item-selected .menu-icon,
+.main-menu .ant-menu-item-selected .menu-text {
+  color: white !important;
+}
+
+/* Menu Icons */
 .menu-icon {
   font-size: 18px;
   margin-right: 12px;
@@ -151,118 +263,181 @@
   align-items: center;
   justify-content: center;
   width: 20px;
-  color: var(--text-light);
+  color: inherit;
 }
 
+.main-menu .ant-menu-item:hover .menu-icon {
+  transform: scale(1.1);
+}
+
+/* Menu Text */
 .menu-text {
   font-weight: 500;
+  font-size: 14px;
   transition: all 0.3s ease;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: var(--text-light);
+  color: inherit;
 }
 
-/* Collapsed Menu Item Styles */
+/* ============================================
+   COLLAPSED MENU STYLES
+   ============================================ */
 .main-menu.ant-menu-inline-collapsed .ant-menu-item {
-  padding: var(--spacing-md) 22px;
+  padding: 16px 20px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 56px;
+  min-height: 64px;
+  margin: 6px 8px;
 }
 
 .main-menu.ant-menu-inline-collapsed .menu-icon {
   margin-right: 0;
-  margin-bottom: 4px;
-  font-size: 20px;
+  margin-bottom: 6px;
+  font-size: 22px;
 }
 
 .main-menu.ant-menu-inline-collapsed .menu-text {
-  font-size: 10px;
-  line-height: 1.2;
+  font-size: 11px;
+  line-height: 1.3;
   max-width: 100%;
   word-wrap: break-word;
   text-align: center;
   opacity: 0.9;
+  font-weight: 600;
 }
 
-/* Menu items without icons - show first letters */
-.menu-item-no-icon {
-  position: relative;
-}
-
+/* ============================================
+   MENU PLACEHOLDER - No Icon Items
+   ============================================ */
 .menu-item-no-icon .menu-placeholder {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: calc(var(--border-radius) / 2);
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(
+    135deg,
+    rgba(13, 71, 161, 0.3),
+    rgba(114, 46, 209, 0.25)
+  );
+  border-radius: 6px;
   font-size: 11px;
-  font-weight: bold;
+  font-weight: 700;
   margin-right: 12px;
-  color: var(--text-light);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.main-menu .ant-menu-item:hover .menu-placeholder {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 4px 12px rgba(13, 71, 161, 0.3);
 }
 
 .main-menu.ant-menu-inline-collapsed .menu-item-no-icon .menu-placeholder {
   margin-right: 0;
-  margin-bottom: 4px;
-  width: 24px;
-  height: 24px;
-  font-size: 10px;
+  margin-bottom: 6px;
+  width: 28px;
+  height: 28px;
+  font-size: 12px;
 }
 
-/* Submenu Styles */
+/* ============================================
+   SUBMENU STYLES
+   ============================================ */
 .main-menu .ant-menu-sub {
-  background: var(--darker-bg);
-  backdrop-filter: blur(10px);
-  border-radius: var(--border-radius);
-  margin: 4px var(--spacing-sm);
-  padding: 4px 0;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(20px);
+  border-radius: 10px;
+  margin: 6px 12px;
+  padding: 6px 0;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .main-menu .ant-menu-sub .ant-menu-item {
-  padding-left: 48px !important;
-  margin: 2px var(--spacing-sm);
-  border-radius: calc(var(--border-radius) - 2px);
-  background: rgba(255, 255, 255, 0.05);
+  padding-left: 52px !important;
+  margin: 4px 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 13px;
 }
 
 .main-menu .ant-menu-sub .ant-menu-item:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateX(2px);
 }
 
-/* Logout Button */
+.main-menu .ant-menu-sub .ant-menu-item-selected {
+  background: linear-gradient(
+    135deg,
+    rgba(13, 71, 161, 0.6),
+    rgba(114, 46, 209, 0.5)
+  ) !important;
+}
+
+/* ============================================
+   SIDEBAR FOOTER - LOGOUT SECTION
+   ============================================ */
+.sidebar-footer {
+  flex-shrink: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 16px 12px;
+  position: relative;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.footer-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+}
+
+/* Logout Button - Full Width at Bottom */
 .logout-btn {
-  position: absolute !important;
-  bottom: var(--spacing-md) !important;
-  left: var(--spacing-sm) !important;
-  right: var(--spacing-sm) !important;
-  margin: 0 !important;
-  border-radius: var(--border-radius) !important;
-  background: rgba(198, 40, 40, 0.15) !important;
-  border: 1px solid rgba(198, 40, 40, 0.3) !important;
-  color: var(--color-danger) !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: rgba(198, 40, 40, 0.15);
+  border: 1px solid rgba(198, 40, 40, 0.3);
+  color: #ff6b6b;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   backdrop-filter: blur(10px);
+  font-weight: 600;
+  font-size: 14px;
+  margin: 0;
 }
 
 .logout-btn:hover {
-  background: var(--color-danger) !important;
-  color: var(--text-light) !important;
+  background: var(--color-danger);
+  color: white;
   transform: translateY(-2px);
-  box-shadow: var(--shadow-medium) !important;
-  border-color: var(--color-danger) !important;
+  box-shadow: 0 6px 20px rgba(198, 40, 40, 0.4);
+  border-color: var(--color-danger);
+}
+
+.logout-btn:active {
+  transform: translateY(0);
 }
 
 .logout-btn .menu-icon {
   color: inherit;
+  font-size: 18px;
+  margin: 0;
 }
 
 .logout-btn .menu-text {
@@ -270,341 +445,287 @@
   font-weight: 600;
 }
 
-/* Collapsed logout button */
-.main-menu.ant-menu-inline-collapsed .logout-btn {
-  bottom: var(--spacing-md) !important;
-  left: calc(var(--spacing-md) - 4px) !important;
-  right: calc(var(--spacing-md) - 4px) !important;
-}
-
-/* Submenu Styles */
-.main-menu .ant-menu-sub {
-  background: var(--darker-bg);
-  backdrop-filter: blur(10px);
-  border-radius: var(--border-radius);
-  margin: 4px var(--spacing-sm);
-  padding: 4px 0;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-.main-menu .ant-menu-sub .ant-menu-item {
-  padding-left: 48px !important;
-  margin: 2px var(--spacing-sm);
-  border-radius: calc(var(--border-radius) - 2px);
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.main-menu .ant-menu-sub .ant-menu-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-/* Custom Scrollbar สำหรับ Navigator */
-.sidebar-navigator::-webkit-scrollbar {
-  width: 4px;
-}
-
-.sidebar-navigator::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 2px;
-}
-
-.sidebar-navigator::-webkit-scrollbar-thumb {
-  background: var(--color-primary);
-  border-radius: 2px;
-  transition: background 0.3s ease;
-}
-
-.sidebar-navigator::-webkit-scrollbar-thumb:hover {
-  background: var(--color-secondary);
-}
-.content-header {
-  background: linear-gradient(
-    135deg,
-    var(--color-primary),
-    var(--color-secondary)
-  );
-  padding: var(--spacing-md) 24px;
-  color: var(--text-light);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: var(--shadow-light);
-  min-height: 80px;
-}
-
-.header-left {
-  display: flex;
+/* Collapsed State - Icon + Small Text */
+.sidebar.ant-layout-sider-collapsed .logout-btn {
+  padding: 14px 8px;
   flex-direction: column;
   gap: 4px;
 }
 
-.content-title {
-  font-size: 24px;
-  font-weight: 700;
-  margin: 0;
-  color: var(--text-light);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+.sidebar.ant-layout-sider-collapsed .logout-btn .menu-icon {
+  font-size: 20px;
+}
+
+.sidebar.ant-layout-sider-collapsed .logout-btn .menu-text {
+  font-size: 11px;
   line-height: 1.2;
 }
 
-.breadcrumb {
-  margin: 0;
-}
-
-.breadcrumb .ant-breadcrumb-link {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 12px;
-}
-
-.breadcrumb .ant-breadcrumb-separator {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: var(--border-radius);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
-}
-
-.user-info:hover {
-  background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-1px);
-}
-
-.user-role {
-  background: rgba(255, 255, 255, 0.2);
-  color: var(--text-light);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.user-name {
-  color: var(--text-light);
-  font-weight: 500;
-  font-size: 14px;
-}
-
-/* Content Header Improvements */
-.content-header {
-  background: linear-gradient(
-    135deg,
-    var(--color-primary),
-    var(--color-secondary)
-  );
-  padding: var(--spacing-md) 24px;
-  color: var(--text-light);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: var(--shadow-light);
-  min-height: 80px;
-}
-
-.header-left {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.content-title {
-  font-size: 24px;
-  font-weight: 700;
-  margin: 0;
-  color: var(--text-light);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  line-height: 1.2;
-}
-
-.breadcrumb {
-  margin: 0;
-}
-
-.breadcrumb .ant-breadcrumb-link {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 12px;
-}
-
-.breadcrumb .ant-breadcrumb-separator {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: var(--border-radius);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
-}
-
-.user-info:hover {
-  background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-1px);
-}
-
-.user-role {
-  background: rgba(255, 255, 255, 0.2);
-  color: var(--text-light);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.user-name {
-  color: var(--text-light);
-  font-weight: 500;
-  font-size: 14px;
-}
-
-.content-body {
-  padding: 24px;
-  min-height: calc(100vh - 200px);
-  background: var(--card-background);
-  color: var(--text-primary);
-}
-
-/* Collapse Button */
+/* ============================================
+   COLLAPSE TRIGGER BUTTON - CENTER RIGHT
+   ============================================ */
 .collapse-trigger {
   position: absolute;
   top: 50%;
-  right: -12px;
+  right: -14px;
   transform: translateY(-50%);
-  background: var(--color-primary);
-  border: 2px solid var(--card-background);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-secondary)
+  );
+  border: 3px solid var(--body-background);
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-light);
+  color: white;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 10;
-  box-shadow: var(--shadow-medium);
+  box-shadow: 0 4px 12px rgba(13, 71, 161, 0.3);
 }
 
 .collapse-trigger:hover {
-  background: var(--color-secondary);
-  transform: translateY(-50%) scale(1.1);
-  box-shadow: var(--shadow-strong);
+  background: linear-gradient(
+    135deg,
+    var(--color-secondary),
+    var(--color-primary)
+  );
+  transform: translateY(-50%) scale(1.15) rotate(180deg);
+  box-shadow: 0 6px 20px rgba(13, 71, 161, 0.5);
 }
 
-/* Mobile Responsive */
-@media (max-width: 768px) {
-  .sidebar {
-    position: fixed;
-    z-index: 1000;
-    height: 100vh;
-    left: -200px;
-    transition: left 0.3s ease;
-  }
-
-  .sidebar.mobile-open {
-    left: 0;
-  }
-
-  .content-layout {
-    margin: 8px;
-  }
-
-  .content-body {
-    padding: 16px;
-  }
+.collapse-trigger:active {
+  transform: translateY(-50%) scale(1.05);
 }
 
-/* Animation */
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+.collapse-trigger .anticon {
+  transition: transform 0.3s ease;
 }
 
-.main-menu .ant-menu-item {
-  animation: slideIn 0.3s ease;
+/* ============================================
+   CONTENT LAYOUT
+   ============================================ */
+.content-layout {
+  background: var(--body-background);
 }
 
-/* Loading Spinner */
+/* Content Header */
+.content-header {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-secondary) 100%
+  );
+  padding: 20px 32px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 20px rgba(13, 71, 161, 0.15);
+  min-height: 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.content-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  pointer-events: none;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.content-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  color: white;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+.breadcrumb {
+  margin: 0;
+}
+
+.breadcrumb .ant-breadcrumb-link {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.breadcrumb .ant-breadcrumb-link:hover {
+  color: white;
+}
+
+.breadcrumb .ant-breadcrumb-separator {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+::ng-deep .breadcrumb,
+::ng-deep .breadcrumb .ant-breadcrumb,
+::ng-deep .breadcrumb .ant-breadcrumb-link,
+::ng-deep .breadcrumb .ant-breadcrumb-separator,
+::ng-deep .breadcrumb .ant-breadcrumb .anticon {
+  color: #fff !important;
+}
+
+/* Header Right - User Info */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-info:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.user-role {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-name {
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   CONTENT BODY - CARD STYLE
+   ============================================ */
+.content-body {
+  padding: 32px;
+  min-height: calc(100vh - 80px);
+  background: var(--body-background);
+  color: var(--text-primary);
+  position: relative;
+}
+
+/* Add Card Wrapper Style */
+.content-body::before {
+  content: "";
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  right: 24px;
+  bottom: 24px;
+  background: var(--card-background);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.06);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Style for router-outlet wrapper */
+.content-body > * {
+  position: relative;
+  z-index: 1;
+  padding: 24px;
+}
+
+/* Alternative: Direct card styling if you want to wrap content */
+.content-card {
+  background: var(--card-background);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 400px;
+}
+
+.content-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 12px 32px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+/* Card Header inside content */
+.content-card-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.content-card-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.content-card-description {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+
+/* Loading Overlay */
 .loading-overlay {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.98);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
 }
 
-/* Custom Scrollbar */
-.main-menu::-webkit-scrollbar {
-  width: 4px;
-}
-
-.main-menu::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 2px;
-}
-
-.main-menu::-webkit-scrollbar-thumb {
-  background: var(--color-primary);
-  border-radius: 2px;
-  transition: background 0.3s ease;
-}
-
-.main-menu::-webkit-scrollbar-thumb:hover {
-  background: var(--color-secondary);
-}
-
-/* Typography improvements */
-.sidebar {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
-
-/* Focus states */
-.main-menu .ant-menu-item:focus,
-.collapse-trigger:focus {
-  outline: 2px solid var(--color-info);
-  outline-offset: 2px;
-}
-
-/* Animation improvements */
+/* ============================================
+   ANIMATIONS
+   ============================================ */
 @keyframes slideInLeft {
   from {
     opacity: 0;
@@ -616,23 +737,137 @@
   }
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .main-menu .ant-menu-item {
   animation: slideInLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Hover glow effect */
-.main-menu .ant-menu-item:hover::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.1),
-    rgba(255, 255, 255, 0.05)
-  );
-  border-radius: inherit;
-  pointer-events: none;
+.content-card {
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    z-index: 1000;
+    height: 100vh;
+    left: -200px;
+    transition: left 0.3s ease;
+  }
+
+  .sidebar.mobile-open {
+    left: 0;
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.3);
+  }
+
+  .content-header {
+    padding: 16px 20px;
+    min-height: 70px;
+  }
+
+  .content-title {
+    font-size: 22px;
+  }
+
+  .content-body {
+    padding: 20px;
+  }
+
+  .content-body::before {
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+  }
+
+  .content-card {
+    padding: 20px;
+  }
+
+  .user-info {
+    padding: 8px 12px;
+  }
+
+  .user-name {
+    display: none;
+  }
+
+  .collapse-trigger {
+    right: -12px;
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .content-title {
+    font-size: 18px;
+  }
+
+  .breadcrumb {
+    font-size: 11px;
+  }
+
+  .user-role {
+    display: none;
+  }
+
+  .content-body {
+    padding: 16px;
+  }
+
+  .content-card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+}
+
+/* ============================================
+   FOCUS STATES FOR ACCESSIBILITY
+   ============================================ */
+.main-menu .ant-menu-item:focus,
+.collapse-trigger:focus,
+.logout-btn:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+@media print {
+  .sidebar,
+  .content-header {
+    display: none;
+  }
+
+  .content-body {
+    padding: 0;
+  }
+
+  .content-body::before {
+    display: none;
+  }
 }

@@ -124,8 +124,20 @@
       <div class="header-left">
         <h1 class="content-title">{{ currentPageTitle }}</h1>
         <nz-breadcrumb class="breadcrumb">
-          <nz-breadcrumb-item>Home</nz-breadcrumb-item>
-          <nz-breadcrumb-item>{{ currentPageTitle }}</nz-breadcrumb-item>
+          <!-- Home -->
+          <nz-breadcrumb-item>
+            <nz-icon nzType="home" />
+            <ng-container *ngIf="breadcrumbs.length; else homePlain">
+              <a routerLink="/"> Home</a>
+            </ng-container>
+            <ng-template #homePlain> Home</ng-template>
+          </nz-breadcrumb-item>
+
+          <!-- Dynamic breadcrumbs -->
+          <nz-breadcrumb-item *ngFor="let bc of breadcrumbs; let last = last">
+            <a *ngIf="!last" [routerLink]="bc.url">{{ bc.label }}</a>
+            <span *ngIf="last">{{ bc.label }}</span>
+          </nz-breadcrumb-item>
         </nz-breadcrumb>
       </div>
 
