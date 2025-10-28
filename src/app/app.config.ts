@@ -24,6 +24,7 @@ import {
   MenuFoldOutline,
   UserOutline,
 } from '@ant-design/icons-angular/icons';
+import { APP_INIT_PROVIDER } from './core/init/app.initializer';
 
 const icons: IconDefinition[] = [
   DashboardOutline,
@@ -49,5 +50,6 @@ export const appConfig: ApplicationConfig = {
           }),
       ])
     ),
+    APP_INIT_PROVIDER,
   ],
 };

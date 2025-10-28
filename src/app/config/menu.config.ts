@@ -9,6 +9,8 @@ export interface MenuItem {
   roles: string[]; // Roles that can access this menu
 }
 
+
+
 export const DEMO_MENUS: MenuItem[] = [
   {
     id: '1',

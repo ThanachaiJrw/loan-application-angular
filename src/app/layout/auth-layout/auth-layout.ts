@@ -26,6 +26,7 @@ import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { MenuService } from '../../core/services/menu';
 import { jwtDecode } from 'jwt-decode';
 import { filter, Subscription } from 'rxjs';
+import { TokenService } from '../../core/services/token';
 
 @Component({
   selector: 'app-auth-layout',
@@ -71,6 +72,7 @@ export class AuthLayout implements OnInit, OnDestroy {
   constructor(
     private menuService: MenuService,
     private authService: AuthService,
+    private tokenService: TokenService,
     private router: Router
   ) {}
 
@@ -80,7 +82,7 @@ export class AuthLayout implements OnInit, OnDestroy {
       console.log('### menus from service: ', menus);
       this.menus = menus;
     });
-    this.initUserDetail(localStorage.getItem('access_token'));
+    this.initUserDetail(this.tokenService.getAccessToken());
 
     this.subscription = this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
@@ -102,10 +104,13 @@ export class AuthLayout implements OnInit, OnDestroy {
   initUserDetail(token: string | null) {
     if (!token) return;
     const decoded: any = jwtDecode(token);
-    this.currentUserRole = decoded.role || 'Admin';
+    // this.currentUserRole = decoded.role || 'Admin';
+    this.currentUserRole = 'admin';
     this.currentUser = decoded.name || 'Admin User';
+    console.log('### this.menus from service: ', this.menus);
     this.filteredMenus.set(
-      this.filterMenusByRole(this.menus, decoded.role || 'Admin')
+      // this.filterMenusByRole(this.menus, this.currentUserRole)
+      this.menus
     );
   }
 
@@ -158,9 +163,13 @@ export class AuthLayout implements OnInit, OnDestroy {
     this.authService.logout();
   }
 
+  /**
+   * Filter menu items by user's role.
+   * This logic was originally used during mock stage (before backend integration).
+   * In production, menus are now filtered by the backend API for security reasons.
+   * Keeping this for study reference and portfolio purpose.
+   */
   private filterMenusByRole(menus: MenuItem[], userRole: string): MenuItem[] {
-    console.log('###### Filtering menus for role:', userRole);
-    console.log('###### Filtering menus for menus:', menus);
     return menus
       .filter((menu) => menu.roles.includes(userRole))
       .map((menu) => ({

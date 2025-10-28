@@ -7,6 +7,8 @@ import { AuthService } from '../../core/services/auth';
 import { routes } from '../../app.routes';
 import { Router } from '@angular/router';
 import { Alert } from '../../shared/components/alert/alert';
+import { switchMap } from 'rxjs';
+import { MenuService } from '../../core/services/menu';
 
 @Component({
   standalone: true,
@@ -19,7 +21,8 @@ export class LoginComponent {
   constructor(
     private auth: AuthService,
     private router: Router,
-    private alert: Alert
+    private alert: Alert,
+    private menuService: MenuService
   ) {}
 
   loginFormConfig: FormConfig = {
@@ -64,19 +67,28 @@ export class LoginComponent {
   handleFormAction(event: { action: string; value: any }) {
     switch (event.action) {
       case 'save':
-        console.log('Login data:', event.value);
-        this.auth.login(event.value).subscribe({
-          next: (response) => {
-            this.alert.success(response.message);
-            console.log('Login successful:', response);
-            // Redirect to dashboard or another page if needed
-            this.router.navigate(['/']);
-          },
-          error: (error) => {
-            this.alert.error('Login ไม่สำเร็จ');
-            console.error('Login failed:', error);
-          },
-        });
+        this.auth
+          .login(event.value)
+          .pipe(
+            switchMap((response) => {
+              // Load Menu When Login.
+              // const menuItem = await this.menuService.loadMenu();
+              // console.log('################### login menuItem : ', menuItem);
+              // return menuItem;
+
+              return this.menuService.loadMenu();
+            })
+          )
+          .subscribe({
+            next: () => {
+              this.alert.success('Login สำเร็จและโหลดเมนูแล้ว');
+              this.router.navigate(['/']);
+            },
+            error: (error) => {
+              this.alert.error('Login หรือโหลดเมนูไม่สำเร็จ');
+              console.error(error);
+            },
+          });
         break;
       case 'reset':
         console.log('Form reset สำเร็จ');
