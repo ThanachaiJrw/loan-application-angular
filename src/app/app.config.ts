@@ -50,6 +50,6 @@ export const appConfig: ApplicationConfig = {
           }),
       ])
     ),
-    APP_INIT_PROVIDER,
+    APP_INIT_PROVIDER, //before app running
   ],
 };

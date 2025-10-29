@@ -7,8 +7,9 @@ import { AuthService } from '../../core/services/auth';
 import { routes } from '../../app.routes';
 import { Router } from '@angular/router';
 import { Alert } from '../../shared/components/alert/alert';
-import { switchMap } from 'rxjs';
+import { switchMap, tap } from 'rxjs';
 import { MenuService } from '../../core/services/menu';
+import { MenuItem } from '../../config/menu.config';
 
 @Component({
   standalone: true,
@@ -64,6 +65,18 @@ export class LoginComponent {
     ],
   };
 
+  // recusive find first route if inside nested array.
+  private findFirstRoute(menus: MenuItem[]): MenuItem | null {
+    for (const menu of menus) {
+      if (menu.route) return menu;
+      if (menu.children && menu.children?.length) {
+        const child = this.findFirstRoute(menu.children);
+        if (child) return child;
+      }
+    }
+    return null;
+  }
+
   handleFormAction(event: { action: string; value: any }) {
     switch (event.action) {
       case 'save':
@@ -71,18 +84,23 @@ export class LoginComponent {
           .login(event.value)
           .pipe(
             switchMap((response) => {
-              // Load Menu When Login.
-              // const menuItem = await this.menuService.loadMenu();
-              // console.log('################### login menuItem : ', menuItem);
-              // return menuItem;
-
+              // load menu
               return this.menuService.loadMenu();
+            }),
+            tap((menus) => {
+              // find first route
+              const firstRoute = this.findFirstRoute(menus);
+              if (!!firstRoute) {
+                this.router.navigate([firstRoute.route]);
+              } else {
+                this.router.navigate(['/']);
+              }
             })
           )
           .subscribe({
             next: () => {
               this.alert.success('Login สำเร็จและโหลดเมนูแล้ว');
-              this.router.navigate(['/']);
+              // this.router.navigate(['/']);
             },
             error: (error) => {
               this.alert.error('Login หรือโหลดเมนูไม่สำเร็จ');
