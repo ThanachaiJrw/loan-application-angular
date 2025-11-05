@@ -17,14 +17,17 @@ export class AuthGuard implements CanActivate {
       return this.auth.refreshToken().pipe(
         switchMap((res) => {
           // สมมติถ้า refresh สำเร็จ token ถูกเซฟโดย AuthService
-          return of(
-            this.auth.isAuthenticated() ? true : this.router.parseUrl('/login')
-          );
+          return of(this.auth.isAuthenticated() ? true : this.clearAll());
         }),
         catchError(() => of(this.router.parseUrl('/login')))
       );
     }
 
     return of(this.router.parseUrl('/login'));
+  }
+
+  private clearAll(): UrlTree {
+    this.auth.clearData();
+    return this.router.parseUrl('/login');
   }
 }

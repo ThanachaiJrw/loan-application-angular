@@ -23,6 +23,11 @@ export class AuthInterceptor implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
+    // Api list aren't use access token.
+    const excludedUrls = ['/auth/login', '/auth/refresh'];
+    if (excludedUrls.some((url) => req.url.includes(url))) {
+      return next.handle(req);
+    }
     const accessToken = this.tokenService.getAccessToken();
     if (accessToken) {
       req = req.clone({

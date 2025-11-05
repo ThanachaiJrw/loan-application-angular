@@ -4,6 +4,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { DEMO_MENUS, MenuItem } from '../../config/menu.config';
 import { ApiService, ApiResponse } from './api';
 
+//  ต้องย้ายไป env แล้ว Injection เข้ามา
 const MENU_CACHE_KEY = 'app_menu_cache_v1';
 const MENU_CACHE_TTL_MS = 1000 * 60 * 60; // 1 hour
 
@@ -16,16 +17,19 @@ export class MenuService {
 
   constructor(private api: ApiService) {}
 
+  // get menusSubject
   getSnapshot(): MenuItem[] {
     return this.menusSubject.value;
   }
 
+  // setMenu
   setMenu(items: MenuItem[]): void {
     this.menusSubject.next(items);
     this.saveToCache(items);
   }
 
-  clearCache(): void {
+  // clearMenuCache
+  clearMenuCache(): void {
     try {
       localStorage.removeItem(MENU_CACHE_KEY);
     } catch {
@@ -68,7 +72,8 @@ export class MenuService {
   loadMenu(force = false): Observable<MenuItem[]> {
     if (!force) {
       const cached = this.loadFromCache();
-      if (cached) {
+      console.log('####################### loadMenu cached: ', cached);
+      if (!!cached) {
         this.menusSubject.next(cached);
         return of(cached);
       }

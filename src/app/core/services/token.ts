@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 
+//  ต้องย้ายไป env แล้ว Injection เข้ามา
 const ACCESS_TOKEN_KEY = 'access_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
 

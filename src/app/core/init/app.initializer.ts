@@ -2,23 +2,28 @@ import { APP_INITIALIZER, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { MenuService } from '../services/menu';
 import { AuthService } from '../services/auth';
+import { TokenService } from '../services/token';
 
 // factory ที่คืนค่าเป็นฟังก์ชันที่ Angular จะเรียกตอนเริ่มแอป
 export function appInitializerFactory() {
   const auth = inject(AuthService);
   const menu = inject(MenuService);
+  const tokenService = inject(TokenService);
 
   return async (): Promise<void> => {
     try {
-      // restoreSession() / loadToken() เป็นตัวอย่าง ฟังก์ชันจริงขึ้นกับ AuthService ของคุณ
       if (typeof auth.restoreSession === 'function') {
+        console.log(
+          '####################### appInitializerFactory auth.restoreSession : '
+        );
         await Promise.resolve(auth.restoreSession());
-      } else if (typeof auth.loadToken === 'function') {
-        await Promise.resolve(auth.loadToken());
       }
 
-      // ถ้ามี token อยู่ ให้โหลดเมนูจาก API (menu.loadMenu คืน Observable)
-      const token = (auth as any).getToken?.() || (auth as any).token;
+      const token = tokenService.getAccessToken();
+      console.log(
+        '####################### appInitializerFactory token : ',
+        token
+      );
       if (token) {
         try {
           await firstValueFrom(menu.loadMenu());

@@ -4,6 +4,7 @@ import { TokenService } from './token';
 import { catchError, firstValueFrom, Observable, of, tap, map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { MenuService } from './menu';
 
 export interface LoginRequest {
   username: string;
@@ -19,19 +20,13 @@ export interface LoginResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  token?: string | null;
-
   // Authentication related methods will go here
   constructor(
     private api: ApiService,
     private tokenService: TokenService,
+    private menuService: MenuService,
     private router: Router
   ) {}
-
-  // โหลด token จาก TokenService (ไม่ใช่ network) — ใช้เป็น loadToken()
-  loadToken(): void {
-    this.token = this.tokenService.getAccessToken() || null;
-  }
 
   login(dataLogin: LoginRequest): Observable<ApiResponse> {
     return this.api.post<ApiResponse>('auth/login', dataLogin).pipe(
@@ -42,8 +37,6 @@ export class AuthService {
             this.tokenService.setRefreshToken(data.refreshToken);
           if (data.accessToken)
             this.tokenService.setAccessToken(data.accessToken);
-          // เก็บลง instance ด้วย
-          this.token = data.accessToken || null;
         }
       })
     );
@@ -61,7 +54,6 @@ export class AuthService {
               this.tokenService.setRefreshToken(data.refreshToken);
             if (data.accessToken)
               this.tokenService.setAccessToken(data.accessToken);
-            this.token = data.accessToken || null;
           }
         })
       );
@@ -74,9 +66,13 @@ export class AuthService {
     } catch (error) {
       console.error('Logout error:', error);
     }
-    await this.tokenService.clearTokens();
-    this.token = null;
+    await this.clearData();
     await this.router.navigate(['/login']);
+  }
+
+  clearData(): void {
+    this.tokenService.clearTokens();
+    this.menuService.clearMenuCache();
   }
 
   isAuthenticated(): boolean {
@@ -90,19 +86,20 @@ export class AuthService {
   restoreSession(): Observable<void> {
     const stored = this.tokenService.getAccessToken();
     if (!stored) return of(void 0);
-    // ถ้าต้อง validate token กับ backend:
+    // validate token กับ backend:
     return this.api.post('auth/validate', { token: stored }).pipe(
       tap((res) => {
         console.log('################ auth/validate response:', res);
+        console.log(
+          '####################### appInitializerFactory auth/validate response : ',
+          res.data
+        );
         if (res?.data?.valid) {
-          this.token = stored;
         } else {
-          this.token = null;
           this.tokenService.clearTokens();
         }
       }),
       catchError(() => {
-        this.token = null;
         this.tokenService.clearTokens();
         return of(void 0);
       }),
